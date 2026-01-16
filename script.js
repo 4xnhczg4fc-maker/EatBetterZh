@@ -1,52 +1,54 @@
-// === "Datenbank" ===
-const restaurants = [
-  {
-    name: "Burger Palace",
-    menu: [
-      { item: "Burger", price: 8.99 },
-      { item: "Cheeseburger", price: 9.99 }
-    ]
-  },
-  {
-    name: "Pizza House",
-    menu: [
-      { item: "Pizza Margherita", price: 7.50 },
-      { item: "Burger", price: 10.50 }
-    ]
-  },
-  {
-    name: "Street Food Spot",
-    menu: [
-      { item: "Vegan Burger", price: 11.00 }
-    ]
-  }
-];
+const map = L.map("map").setView([47.3769, 8.5417], 13);
 
-// === Suchfunktion ===
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: "© OpenStreetMap"
+}).addTo(map);
+
+let markers = [];
+
+function clearMarkers() {
+  markers.forEach(m => map.removeLayer(m));
+  markers = [];
+}
+
+fetch("restaurants.json")
+  .then(res => res.json())
+  .then(data => {
+    window.restaurantData = data;
+  });
+
 function searchFood() {
   const query = document.getElementById("searchInput").value.toLowerCase();
   const resultsDiv = document.getElementById("results");
 
   resultsDiv.innerHTML = "";
+  clearMarkers();
 
-  restaurants.forEach(restaurant => {
-    restaurant.menu.forEach(dish => {
-      if (dish.item.toLowerCase().includes(query)) {
-        const card = document.createElement("div");
-        card.className = "card";
+  const filtered = window.restaurantData.filter(item =>
+    item.dish_name.toLowerCase().includes(query)
+  );
 
-        card.innerHTML = `
-          <h3>${restaurant.name}</h3>
-          <p>🍽️ ${dish.item}</p>
-          <p>💰 ${dish.price.toFixed(2)} €</p>
-        `;
+  if (filtered.length === 0) {
+    resultsDiv.innerHTML = "<p>Keine Ergebnisse gefunden.</p>";
+    return;
+  }
 
-        resultsDiv.appendChild(card);
-      }
-    });
+  filtered.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <h3>${item.name}</h3>
+      <p>${item.dish_name} – ${item.price} €</p>
+    `;
+    resultsDiv.appendChild(card);
+
+    const marker = L.marker([item.lat, item.lng])
+      .addTo(map)
+      .bindPopup(`${item.name}<br>${item.dish_name}`);
+
+    markers.push(marker);
   });
 
-  if (resultsDiv.innerHTML === "") {
-    resultsDiv.innerHTML = "<p>Keine Ergebnisse gefunden.</p>";
-  }
+  const group = L.featureGroup(markers);
+  map.fitBounds(group.getBounds().pad(0.2));
 }
