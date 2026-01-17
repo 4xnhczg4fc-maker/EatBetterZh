@@ -166,3 +166,7 @@ function rate(restaurantId, value) {
   addRating(restaurantId, Number(value));
   searchFood();
 }
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
