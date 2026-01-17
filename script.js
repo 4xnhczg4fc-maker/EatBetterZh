@@ -124,7 +124,10 @@ function searchFood() {
       <p>🍽️ ${item.dish_name}</p>
       <p>💰 ${item.price.toFixed(2)} €</p>
       <p>📏 ${item.distance.toFixed(2)} km</p>
-      <p>⭐ ${item.avgRating.toFixed(1)} / 5</p>
+      <p>
+  ⭐ ${item.avgRating.toFixed(1)} / 5 
+  (${getRatings(item.restaurant_id).length} Bewertungen)
+</p>
 
       <label>Bewerten:</label>
       <select onchange="rate(${item.restaurant_id}, this.value)">
