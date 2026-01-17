@@ -1,3 +1,4 @@
+// Karte initialisieren
 const map = L.map("map").setView([47.3769, 8.5417], 13);
 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -6,18 +7,28 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 
 let markers = [];
 
+// Marker entfernen
 function clearMarkers() {
   markers.forEach(m => map.removeLayer(m));
   markers = [];
 }
 
+// Daten laden
 fetch("restaurants.json")
   .then(res => res.json())
   .then(data => {
     window.restaurantData = data;
+    console.log("Daten geladen:", data);
   });
 
+// Suche
 function searchFood() {
+  // ✅ RICHTIGER ORT für die Prüfung
+  if (!window.restaurantData) {
+    alert("Daten werden noch geladen, bitte kurz warten.");
+    return;
+  }
+
   const query = document.getElementById("searchInput").value.toLowerCase();
   const resultsDiv = document.getElementById("results");
 
