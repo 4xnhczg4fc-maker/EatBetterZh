@@ -91,7 +91,7 @@ if (navigator.geolocation) {
 }
 
 // =====================
-// Daten
+// Daten laden
 // =====================
 fetch("restaurants.json")
   .then(r => r.json())
@@ -138,7 +138,7 @@ function searchFood() {
     card.innerHTML = `
       <h3>
         ${item.name}
-        <span class="heart" onclick="toggleFavorite(${item.restaurant_id})">
+        <span onclick="toggleFavorite(${item.restaurant_id})" style="cursor:pointer">
           ${isFavorite(item.restaurant_id) ? "❤️" : "🤍"}
         </span>
       </h3>
@@ -175,7 +175,10 @@ function rate(id, value) {
 }
 
 function showRoute(lat, lng) {
-  if (!userLocation) return;
+  if (!userLocation) {
+    alert("Standort nicht verfügbar");
+    return;
+  }
 
   if (routeControl) map.removeControl(routeControl);
 
@@ -186,4 +189,11 @@ function showRoute(lat, lng) {
     ],
     show: false
   }).addTo(map);
+}
+
+// =====================
+// PWA
+// =====================
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
 }
