@@ -1,5 +1,5 @@
 // =====================
-// Karte initialisieren
+// Karte
 // =====================
 const map = L.map("map").setView([47.3769, 8.5417], 13);
 
@@ -7,11 +7,9 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "© OpenStreetMap"
 }).addTo(map);
 
-// =====================
-// Variablen
-// =====================
 let markers = [];
 let userLocation = null;
+let routeControl = null;
 
 // =====================
 // Hilfsfunktionen
@@ -19,44 +17,63 @@ let userLocation = null;
 function clearMarkers() {
   markers.forEach(m => map.removeLayer(m));
   markers = [];
+  if (routeControl) {
+    map.removeControl(routeControl);
+    routeControl = null;
+  }
 }
 
-// Entfernung (km)
 function getDistanceKm(lat1, lon1, lat2, lon2) {
   const R = 6371;
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLon = (lon2 - lon1) * Math.PI / 180;
-
   const a =
     Math.sin(dLat / 2) ** 2 +
     Math.cos(lat1 * Math.PI / 180) *
     Math.cos(lat2 * Math.PI / 180) *
     Math.sin(dLon / 2) ** 2;
-
   return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
 }
 
 // =====================
-// Bewertungen (localStorage)
+// Bewertungen
 // =====================
-function getRatings(restaurantId) {
-  return JSON.parse(localStorage.getItem("ratings_" + restaurantId)) || [];
+function getRatings(id) {
+  return JSON.parse(localStorage.getItem("ratings_" + id)) || [];
 }
 
-function addRating(restaurantId, value) {
-  const ratings = getRatings(restaurantId);
-  ratings.push(value);
-  localStorage.setItem("ratings_" + restaurantId, JSON.stringify(ratings));
+function addRating(id, value) {
+  const r = getRatings(id);
+  r.push(value);
+  localStorage.setItem("ratings_" + id, JSON.stringify(r));
 }
 
-function getAverageRating(restaurantId) {
-  const ratings = getRatings(restaurantId);
-  if (ratings.length === 0) return 0;
-  return ratings.reduce((a, b) => a + b, 0) / ratings.length;
+function getAverageRating(id) {
+  const r = getRatings(id);
+  if (r.length === 0) return 0;
+  return r.reduce((a, b) => a + b, 0) / r.length;
 }
 
 // =====================
-// Live-Standort
+// Favoriten
+// =====================
+function getFavorites() {
+  return JSON.parse(localStorage.getItem("favorites")) || [];
+}
+
+function toggleFavorite(id) {
+  let favs = getFavorites();
+  favs = favs.includes(id) ? favs.filter(f => f !== id) : [...favs, id];
+  localStorage.setItem("favorites", JSON.stringify(favs));
+  searchFood();
+}
+
+function isFavorite(id) {
+  return getFavorites().includes(id);
+}
+
+// =====================
+// Standort
 // =====================
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(pos => {
@@ -67,106 +84,106 @@ if (navigator.geolocation) {
 
     L.marker([userLocation.lat, userLocation.lng])
       .addTo(map)
-      .bindPopup("📍 Dein Standort")
-      .openPopup();
+      .bindPopup("📍 Dein Standort");
 
     map.setView([userLocation.lat, userLocation.lng], 14);
   });
 }
 
 // =====================
-// Daten laden
+// Daten
 // =====================
 fetch("restaurants.json")
-  .then(res => res.json())
-  .then(data => window.restaurantData = data);
+  .then(r => r.json())
+  .then(d => window.restaurantData = d);
 
 // =====================
-// Suche + Sortierung
+// Suche
 // =====================
 function searchFood() {
   if (!window.restaurantData) return;
 
   const query = document.getElementById("searchInput").value.toLowerCase();
   const sortType = document.getElementById("sortSelect").value;
+  const favFilter = document.getElementById("favoriteFilter").value;
   const resultsDiv = document.getElementById("results");
 
   resultsDiv.innerHTML = "";
   clearMarkers();
 
   let results = window.restaurantData
-    .filter(item => item.dish_name.toLowerCase().includes(query))
-    .map(item => {
-      const distance = userLocation
-        ? getDistanceKm(userLocation.lat, userLocation.lng, item.lat, item.lng)
-        : Infinity;
+    .filter(r => r.dish_name.toLowerCase().includes(query))
+    .map(r => ({
+      ...r,
+      distance: userLocation
+        ? getDistanceKm(userLocation.lat, userLocation.lng, r.lat, r.lng)
+        : Infinity,
+      avgRating: getAverageRating(r.restaurant_id)
+    }));
 
-      const avgRating = getAverageRating(item.restaurant_id);
-
-      return { ...item, distance, avgRating };
-    });
-
-  // 🔍 SORTIEREN
-  if (sortType === "distance") {
-    results.sort((a, b) => a.distance - b.distance);
-  } else if (sortType === "rating") {
-    results.sort((a, b) => b.avgRating - a.avgRating);
+  if (favFilter === "favorites") {
+    results = results.filter(r => isFavorite(r.restaurant_id));
   }
 
-  const bounds = [];
+  if (sortType === "distance") {
+    results.sort((a, b) => a.distance - b.distance);
+  } else {
+    results.sort((a, b) => b.avgRating - a.avgRating);
+  }
 
   results.forEach(item => {
     const card = document.createElement("div");
     card.className = "card";
 
     card.innerHTML = `
-      <h3>${item.name}</h3>
+      <h3>
+        ${item.name}
+        <span class="heart" onclick="toggleFavorite(${item.restaurant_id})">
+          ${isFavorite(item.restaurant_id) ? "❤️" : "🤍"}
+        </span>
+      </h3>
+
       <p>🍽️ ${item.dish_name}</p>
       <p>💰 ${item.price.toFixed(2)} €</p>
       <p>📏 ${item.distance.toFixed(2)} km</p>
-      <p>
-  ⭐ ${item.avgRating.toFixed(1)} / 5 
-  (${getRatings(item.restaurant_id).length} Bewertungen)
-</p>
+      <p>⭐ ${item.avgRating.toFixed(1)} (${getRatings(item.restaurant_id).length})</p>
 
-      <label>Bewerten:</label>
-      <select onchange="rate(${item.restaurant_id}, this.value)">
-        <option value="">–</option>
-        <option value="1">1 ⭐</option>
-        <option value="2">2 ⭐⭐</option>
-        <option value="3">3 ⭐⭐⭐</option>
-        <option value="4">4 ⭐⭐⭐⭐</option>
-        <option value="5">5 ⭐⭐⭐⭐⭐</option>
-      </select>
+      <div class="stars">
+        ${[1,2,3,4,5].map(n =>
+          `<span class="star" onclick="rate(${item.restaurant_id}, ${n})">★</span>`
+        ).join("")}
+      </div>
+
+      <button onclick="showRoute(${item.lat}, ${item.lng})">
+        🗺️ Route anzeigen
+      </button>
     `;
 
     resultsDiv.appendChild(card);
 
-    const marker = L.marker([item.lat, item.lng])
-      .addTo(map)
-      .bindPopup(
-        `<strong>${item.name}</strong><br>
-         ⭐ ${item.avgRating.toFixed(1)}<br>
-         📏 ${item.distance.toFixed(2)} km`
-      );
-
+    const marker = L.marker([item.lat, item.lng]).addTo(map);
     markers.push(marker);
-    bounds.push([item.lat, item.lng]);
   });
-
-  if (bounds.length > 0) {
-    map.fitBounds(bounds, { padding: [40, 40] });
-  }
 }
 
 // =====================
-// Bewertung abgeben
+// Aktionen
 // =====================
-function rate(restaurantId, value) {
-  addRating(restaurantId, Number(value));
+function rate(id, value) {
+  addRating(id, value);
   searchFood();
 }
 
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js");
+function showRoute(lat, lng) {
+  if (!userLocation) return;
+
+  if (routeControl) map.removeControl(routeControl);
+
+  routeControl = L.Routing.control({
+    waypoints: [
+      L.latLng(userLocation.lat, userLocation.lng),
+      L.latLng(lat, lng)
+    ],
+    show: false
+  }).addTo(map);
 }
