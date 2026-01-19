@@ -35,3 +35,20 @@ button {
   margin-top: 20px;
   border-radius: 8px;
 }
+
+.heart {
+  cursor: pointer;
+  font-size: 20px;
+  margin-left: 8px;
+}
+
+.stars {
+  display: flex;
+  gap: 6px;
+  font-size: 22px;
+}
+
+.star {
+  color: gold;
+  cursor: pointer;
+}
