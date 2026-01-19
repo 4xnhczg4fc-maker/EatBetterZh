@@ -1,4 +1,4 @@
-alert("script.js geladen");
+// alert("script.js geladen");
 // =====================
 // Karte
 // =====================
