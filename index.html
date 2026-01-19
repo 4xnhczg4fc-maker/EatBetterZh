@@ -4,35 +4,38 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">
+
   <title>Food Finder</title>
+
   <link rel="stylesheet" href="style.css" />
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
 </head>
 <body>
 
   <h1>🍔 Food Finder</h1>
   <p>Suche nach einem Gericht (z.B. Burger, Pizza)</p>
 
-  <input 
-    type="text" 
-    id="searchInput" 
-    placeholder="Gericht eingeben..."
-  />
+  <input type="text" id="searchInput" placeholder="Gericht eingeben..." />
   <button onclick="searchFood()">Suchen</button>
 
   <select id="sortSelect">
-  <option value="distance">Nächste zuerst</option>
-  <option value="rating">Beste Bewertung</option>
-</select>
+    <option value="distance">Nächste zuerst</option>
+    <option value="rating">Beste Bewertung</option>
+  </select>
+
+  <select id="favoriteFilter">
+    <option value="all">Alle</option>
+    <option value="favorites">❤️ Nur Favoriten</option>
+  </select>
 
   <div id="results"></div>
   <div id="map"></div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="script.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+  <script src="script.js"></script>
+
 </body>
 </html>
