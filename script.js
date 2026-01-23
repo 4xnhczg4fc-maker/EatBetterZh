@@ -1,4 +1,3 @@
-// alert("script.js geladen");
 // =====================
 // Karte
 // =====================
@@ -106,7 +105,6 @@ function searchFood() {
 
   const query = document.getElementById("searchInput").value.toLowerCase();
   const sortType = document.getElementById("sortSelect").value;
-  const favFilter = document.getElementById("favoriteFilter").value;
   const resultsDiv = document.getElementById("results");
 
   resultsDiv.innerHTML = "";
@@ -122,10 +120,6 @@ function searchFood() {
       avgRating: getAverageRating(r.restaurant_id)
     }));
 
-  if (favFilter === "favorites") {
-    results = results.filter(r => isFavorite(r.restaurant_id));
-  }
-
   if (sortType === "distance") {
     results.sort((a, b) => a.distance - b.distance);
   } else {
@@ -136,28 +130,22 @@ function searchFood() {
     const card = document.createElement("div");
     card.className = "card";
 
-    card.innerHTML = `
-      <h3>
-        ${item.name}
-        <span onclick="toggleFavorite(${item.restaurant_id})" style="cursor:pointer">
-          ${isFavorite(item.restaurant_id) ? "❤️" : "🤍"}
-        </span>
-      </h3>
+    const fav = isFavorite(item.restaurant_id) ? "❤️" : "🤍";
 
+    card.innerHTML = `
+      <h3>${item.name} <span onclick="toggleFavorite(${item.restaurant_id})">${fav}</span></h3>
       <p>🍽️ ${item.dish_name}</p>
       <p>💰 ${item.price.toFixed(2)} €</p>
       <p>📏 ${item.distance.toFixed(2)} km</p>
       <p>⭐ ${item.avgRating.toFixed(1)} (${getRatings(item.restaurant_id).length})</p>
 
-      <div class="stars">
+      <div class="stars" id="stars-${item.restaurant_id}">
         ${[1,2,3,4,5].map(n =>
           `<span class="star" onclick="rate(${item.restaurant_id}, ${n})">★</span>`
         ).join("")}
       </div>
 
-      <button onclick="showRoute(${item.lat}, ${item.lng})">
-        🗺️ Route anzeigen
-      </button>
+      <button onclick="showRoute(${item.lat}, ${item.lng})">🗺️ Route anzeigen</button>
     `;
 
     resultsDiv.appendChild(card);
@@ -165,16 +153,35 @@ function searchFood() {
     const marker = L.marker([item.lat, item.lng]).addTo(map);
     markers.push(marker);
   });
+
+  highlightStars();
 }
 
 // =====================
-// Aktionen
+// Sterne highlighten
+// =====================
+function highlightStars() {
+  window.restaurantData.forEach(r => {
+    const avg = Math.round(getAverageRating(r.restaurant_id));
+    const stars = document.querySelectorAll(`#stars-${r.restaurant_id} .star`);
+    stars.forEach((s, i) => {
+      if (i < avg) s.classList.add("active");
+      else s.classList.remove("active");
+    });
+  });
+}
+
+// =====================
+// Bewertung
 // =====================
 function rate(id, value) {
   addRating(id, value);
   searchFood();
 }
 
+// =====================
+// Route (Apple Maps Style Panel)
+// =====================
 function showRoute(lat, lng) {
   if (!userLocation) {
     alert("Standort nicht verfügbar");
@@ -188,7 +195,9 @@ function showRoute(lat, lng) {
       L.latLng(userLocation.lat, userLocation.lng),
       L.latLng(lat, lng)
     ],
-    show: false
+    lineOptions: { styles: [{ weight: 6 }] },
+    collapsible: true,
+    show: true
   }).addTo(map);
 }
 
