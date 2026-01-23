@@ -52,3 +52,18 @@ button {
   color: gold;
   cursor: pointer;
 }
+
+.stars {
+  font-size: 22px;
+}
+
+.star {
+  cursor: pointer;
+  color: #ccc;
+  transition: 0.2s;
+}
+
+.star:hover,
+.star.active {
+  color: gold;
+}
