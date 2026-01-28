@@ -9,9 +9,8 @@
 
 <!-- Google Maps -->
 <script async defer
-src="https://maps.googleapis.com/maps/api/js?key=АlzaSyClЗ0|zaUСnEXtЗaVVbLaILp_23QaomqKY&libraries=places">
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCl30IzaUCnEXt3aVVbLaILp_23QaomqKY&callback=initMap&libraries=places">
 </script>
-АlzaSyClЗ0|zaUСnEXtЗaVVbLaILp_23QaomqKY
 </head>
 
 <body>
@@ -19,10 +18,17 @@ src="https://maps.googleapis.com/maps/api/js?key=АlzaSyClЗ0|zaUСnEXtЗaVVbLaI
 <div id="map"></div>
 
 <div id="bottomSheet">
-  <input id="searchInput" placeholder="🍔 Burger, Pizza, Sushi..." />
-  
+  <h2>🍔 Food Finder PRO</h2>
+
+  <input id="searchInput" placeholder="Burger, Pizza, Sushi..." />
+
+  <select id="sortSelect">
+    <option value="distance">📏 Nächste zuerst</option>
+    <option value="rating">⭐ Beste Bewertung</option>
+  </select>
+
   <select id="routeMode">
-    <option value="WALKING">🚶‍♂️ Zu Fuß</option>
+    <option value="WALKING">🚶 Zu Fuß</option>
     <option value="DRIVING">🚗 Auto</option>
     <option value="TRANSIT">🚌 ÖV</option>
   </select>
@@ -33,5 +39,5 @@ src="https://maps.googleapis.com/maps/api/js?key=АlzaSyClЗ0|zaUСnEXtЗaVVbLaI
 </div>
 
 <script src="script.js"></script>
-<body onload="initMap()">
+</body>
 </html>
