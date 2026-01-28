@@ -5,16 +5,14 @@
     "dish_name": "Burger",
     "price": 8.9,
     "lat": 47.3769,
-    "lng": 8.5417,
-    "rating": 4.3
+    "lng": 8.5417
   },
   {
     "restaurant_id": 2,
     "name": "Pizza House",
-    "dish_name": "Burger",
-    "price": 10.5,
+    "dish_name": "Pizza",
+    "price": 12.5,
     "lat": 47.378,
-    "lng": 8.538,
-    "rating": 4.1
+    "lng": 8.538
   }
 ]
