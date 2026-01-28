@@ -108,6 +108,7 @@ function searchFood(){
    ${item.dish_name} - ${item.price} CHF<br>
    ⭐ ${item.rating.toFixed(1)} | 📏 ${item.distance.toFixed(2)} km<br>
    ${stars}<br><br>
+   <button onclick="showRoute(lat,lng,'TRANSIT')">🚌 ÖV Route</button>
    <button onclick="showRoute(${item.lat},${item.lng},'WALKING')">🚶 Route</button>
    <button onclick="showRoute(${item.lat},${item.lng},'DRIVING')">🚗 Route</button>
    `;
