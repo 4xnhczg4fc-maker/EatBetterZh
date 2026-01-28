@@ -1,27 +1,38 @@
 // =====================
-// Google Map starten
+// Google Map
 // =====================
 let map, userMarker, directionsService, directionsRenderer;
 let userLocation = null;
+let markers = [];
 
+// =====================
+// Demo Restaurants
+// =====================
+const restaurantData = [
+ {restaurant_id:1,name:"Burger Palace",dish_name:"Burger",price:8.9,lat:47.377,lng:8.541},
+ {restaurant_id:2,name:"Pizza City",dish_name:"Pizza",price:12.5,lat:47.372,lng:8.539},
+ {restaurant_id:3,name:"Sushi House",dish_name:"Sushi",price:18.0,lat:47.374,lng:8.544}
+];
+
+// =====================
+// INIT MAP
+// =====================
 function initMap() {
   map = new google.maps.Map(document.getElementById("map"), {
     center: { lat: 47.3769, lng: 8.5417 },
     zoom: 13,
     mapTypeControl: false,
+    streetViewControl: false,
   });
 
   directionsService = new google.maps.DirectionsService();
-  directionsRenderer = new google.maps.DirectionsRenderer({
-    map: map,
-    suppressMarkers: false
-  });
+  directionsRenderer = new google.maps.DirectionsRenderer({ map });
 
   getUserLocation();
 }
 
 // =====================
-// Standort holen
+// Standort
 // =====================
 function getUserLocation() {
   navigator.geolocation.getCurrentPosition(pos => {
@@ -41,17 +52,7 @@ function getUserLocation() {
 }
 
 // =====================
-// Testdaten
-// =====================
-const restaurantData = [
- {restaurant_id:1,name:"Burger Palace",dish_name:"Burger",price:8.9,lat:47.377,lng:8.541},
- {restaurant_id:2,name:"Pizza City",dish_name:"Pizza",price:12.5,lat:47.372,lng:8.539}
-];
-
-let markers = [];
-
-// =====================
-// Hilfsfunktionen
+// Distance
 // =====================
 function getDistanceKm(a,b,c,d){
  const R=6371;
@@ -69,16 +70,20 @@ function rate(id,v){let r=getRatings(id);r.push(v);localStorage.setItem("r_"+id,
 function avgRating(id){let r=getRatings(id);return r.length? r.reduce((a,b)=>a+b,0)/r.length:0;}
 
 function getFav(){return JSON.parse(localStorage.getItem("fav"))||[];}
-function toggleFav(id){let f=getFav();f=f.includes(id)?f.filter(x=>x!=id):[...f,id];localStorage.setItem("fav",JSON.stringify(f));searchFood();}
+function toggleFav(id){
+ let f=getFav();
+ f=f.includes(id)?f.filter(x=>x!=id):[...f,id];
+ localStorage.setItem("fav",JSON.stringify(f));
+ searchFood();
+}
 function isFav(id){return getFav().includes(id);}
 
 // =====================
-// Suche + Anzeige
+// Suche
 // =====================
 function searchFood(){
  const q=document.getElementById("searchInput").value.toLowerCase();
  const sort=document.getElementById("sortSelect").value;
- const favFilter=document.getElementById("favoriteFilter").value;
  const resDiv=document.getElementById("results");
  resDiv.innerHTML="";
  markers.forEach(m=>m.setMap(null));
@@ -90,7 +95,6 @@ function searchFood(){
  rating:avgRating(r.restaurant_id)
  }));
 
- if(favFilter=="favorites") res=res.filter(r=>isFav(r.restaurant_id));
  if(sort=="distance") res.sort((a,b)=>a.distance-b.distance);
  else res.sort((a,b)=>b.rating-a.rating);
 
@@ -108,9 +112,7 @@ function searchFood(){
    ${item.dish_name} - ${item.price} CHF<br>
    ⭐ ${item.rating.toFixed(1)} | 📏 ${item.distance.toFixed(2)} km<br>
    ${stars}<br><br>
-   <button onclick="showRoute(lat,lng,'TRANSIT')">🚌 ÖV Route</button>
-   <button onclick="showRoute(${item.lat},${item.lng},'WALKING')">🚶 Route</button>
-   <button onclick="showRoute(${item.lat},${item.lng},'DRIVING')">🚗 Route</button>
+   <button onclick="showRoute(${item.lat},${item.lng})">🗺️ Route anzeigen</button>
    `;
    resDiv.appendChild(card);
 
@@ -124,10 +126,12 @@ function searchFood(){
 }
 
 // =====================
-// GOOGLE MAPS ROUTE (ECHT)
+// ROUTE
 // =====================
-function showRoute(lat,lng,mode){
- if(!userLocation){alert("Kein Standort");return;}
+function showRoute(lat,lng){
+ if(!userLocation){alert("Standort fehlt");return;}
+
+ const mode=document.getElementById("routeMode").value;
 
  directionsService.route({
    origin:userLocation,
