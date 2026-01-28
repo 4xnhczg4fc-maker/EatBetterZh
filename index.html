@@ -1,42 +1,34 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#ffffff">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Food Finder PRO</title>
 
-  <title>Food Finder</title>
+<link rel="stylesheet" href="style.css">
 
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+<!-- Google Maps -->
+<script src="https://maps.googleapis.com/maps/api/js?key=DEIN_API_KEY"></script>
 </head>
+
 <body>
 
-  <h1>🍔 Food Finder</h1>
-  <p>Suche nach einem Gericht (z.B. Burger, Pizza)</p>
+<div id="map"></div>
 
-  <input type="text" id="searchInput" placeholder="Gericht eingeben..." />
-  <button onclick="searchFood()">Suchen</button>
-
-  <select id="sortSelect">
-    <option value="distance">Nächste zuerst</option>
-    <option value="rating">Beste Bewertung</option>
+<div id="bottomSheet">
+  <input id="searchInput" placeholder="🍔 Burger, Pizza, Sushi..." />
+  
+  <select id="routeMode">
+    <option value="WALKING">🚶‍♂️ Zu Fuß</option>
+    <option value="DRIVING">🚗 Auto</option>
+    <option value="TRANSIT">🚌 ÖV</option>
   </select>
 
-  <select id="favoriteFilter">
-    <option value="all">Alle</option>
-    <option value="favorites">❤️ Nur Favoriten</option>
-  </select>
+  <button onclick="searchFood()">🔍 Suchen</button>
 
   <div id="results"></div>
-  <div id="map"></div>
+</div>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
-<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
-  <script src="script.js"></script>
-
+<script src="script.js"></script>
 </body>
+</html>
