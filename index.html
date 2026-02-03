@@ -9,16 +9,25 @@
 <link rel="stylesheet" href="style.css">
 <link rel="manifest" href="manifest.json">
 
+<!-- iOS PWA Support -->
+<link rel="apple-touch-icon" href="icon-512.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="theme-color" content="#000000">
+
+<!-- Google Maps -->
 <script async defer
-src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCl30IzaUCnEXt3aVVbLaILp_23QaomqKY&libraries=places&callback=initMap">
+src="https://maps.googleapis.com/maps/api/js?key=DEIN_GOOGLE_MAPS_API_KEY&libraries=places&callback=initMap">
 </script>
 
 </head>
+
 <body>
 
 <div id="map"></div>
 
 <div id="bottomSheet">
+
   <h2>🍔 Food Finder PRO</h2>
 
   <input id="searchInput" placeholder="Pizza, Burger, Sushi..." />
@@ -31,16 +40,18 @@ src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCl30IzaUCnEXt3aVVbLaILp_2
   </select>
 
   <select id="routeMode">
-    <option value="WALKING">🚶</option>
-    <option value="DRIVING">🚗</option>
-    <option value="TRANSIT">🚌</option>
+    <option value="WALKING">🚶 Zu Fuß</option>
+    <option value="DRIVING">🚗 Auto</option>
+    <option value="TRANSIT">🚌 ÖV</option>
   </select>
 
   <button onclick="searchFood()">🔍 Suchen</button>
 
   <div id="results"></div>
+
 </div>
 
 <script src="script.js"></script>
+
 </body>
 </html>
