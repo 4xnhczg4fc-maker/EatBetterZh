@@ -1,54 +1,56 @@
-html, body {
+body {
   margin: 0;
-  height: 100%;
-  font-family: -apple-system;
-  background: black;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #0f172a;
   color: white;
 }
 
 #map {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-}
-
-#bottomSheet {
-  position: fixed;
+  position: absolute;
+  top: 0;
   bottom: 0;
   width: 100%;
-  background: #111;
-  border-radius: 20px 20px 0 0;
-  padding: 12px;
-  max-height: 55%;
-  overflow-y: auto;
-  box-shadow: 0 -10px 40px rgba(0,0,0,0.6);
 }
 
-input, select, button {
+.panel {
+  position: absolute;
+  bottom: 0;
   width: 100%;
-  padding: 10px;
-  margin: 5px 0;
-  border-radius: 10px;
+  background: rgba(15,23,42,0.95);
+  padding: 15px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 12px;
   border: none;
   font-size: 16px;
 }
 
 button {
-  background: #0a84ff;
-  color: white;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
   font-weight: bold;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
 }
 
-.card {
+button:hover {
+  background: #1d4ed8;
+}
+
+.result-card {
+  background: #1e293b;
   padding: 10px;
-  border-bottom: 1px solid #333;
-}
-
-.star {
-  font-size: 20px;
-  color: gray;
-}
-
-.star.active {
-  color: gold;
+  border-radius: 12px;
+  margin-top: 8px;
 }
