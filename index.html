@@ -1,54 +1,29 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FoodFinder PRO</title>
 
-<title>Food Finder PRO</title>
+  <!-- MapLibre -->
+  <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
 
-<link rel="stylesheet" href="style.css">
-<link rel="manifest" href="manifest.json">
+  <!-- Marker Cluster -->
+  <script src="https://unpkg.com/supercluster@7.1.5/dist/supercluster.min.js"></script>
 
-<!-- iOS PWA Support -->
-<link rel="apple-touch-icon" href="icon-512.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="theme-color" content="#000000">
-
-<!-- Google Maps -->
-<script async defer
-src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCl30IzaUCnEXt3aVVbLaILp_23QaomqKY&libraries=places&callback=initMap">
-</script>
-
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
 
 <div id="map"></div>
 
-<div id="bottomSheet">
-
-  <h2>🍔 Food Finder PRO</h2>
-
-  <input id="searchInput" placeholder="Pizza, Burger, Sushi..." />
-
-  <button onclick="findCheapest()">💸 Billigste Pizza finden</button>
-
-  <select id="sortSelect">
-    <option value="distance">📏 Nächste</option>
-    <option value="rating">⭐ Beste</option>
-  </select>
-
-  <select id="routeMode">
-    <option value="WALKING">🚶 Zu Fuß</option>
-    <option value="DRIVING">🚗 Auto</option>
-    <option value="TRANSIT">🚌 ÖV</option>
-  </select>
-
-  <button onclick="searchFood()">🔍 Suchen</button>
-
+<div class="panel">
+  <input type="text" id="searchInput" placeholder="Pizza, Burger, Sushi..." />
+  <button onclick="searchRestaurants()">🔎 Suchen</button>
+  <button onclick="findCheapest()">💸 Billigste finden</button>
   <div id="results"></div>
-
 </div>
 
 <script src="script.js"></script>
