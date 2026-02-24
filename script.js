@@ -1,6 +1,5 @@
 let map;
 let userMarker;
-let restaurants = [];
 let markers = [];
 
 const restaurantData = [
@@ -20,16 +19,23 @@ function initMap(userLocation) {
 
   map.addControl(new maplibregl.NavigationControl());
 
-  userMarker = new maplibregl.Marker({ color: "cyan" })
-    .setLngLat(userLocation)
-    .addTo(map);
+  // WICHTIG: erst nach vollständigem Laden Marker setzen
+  map.on('load', () => {
+
+    // User Marker
+    userMarker = new maplibregl.Marker({ color: "cyan" })
+      .setLngLat(userLocation)
+      .addTo(map);
+
+    loadRestaurants();
+  });
 }
 
 function loadRestaurants() {
   restaurantData.forEach(r => {
-    const marker = new maplibregl.Marker()
+    const marker = new maplibregl.Marker({ color: "#2563eb" })
       .setLngLat(r.coords)
-      .setPopup(new maplibregl.Popup().setHTML(
+      .setPopup(new maplibregl.Popup({ offset: 25 }).setHTML(
         `<strong>${r.name}</strong><br>
          ${r.type}<br>
          ${r.price} CHF<br>
@@ -46,9 +52,19 @@ function searchRestaurants() {
   const resultsDiv = document.getElementById("results");
   resultsDiv.innerHTML = "";
 
+  if (!query) {
+    resultsDiv.innerHTML = "<div class='result-card'>Bitte etwas eingeben.</div>";
+    return;
+  }
+
   const filtered = restaurantData.filter(r =>
     r.type.toLowerCase().includes(query)
   );
+
+  if (filtered.length === 0) {
+    resultsDiv.innerHTML = "<div class='result-card'>Keine Treffer gefunden.</div>";
+    return;
+  }
 
   filtered.forEach(r => {
     resultsDiv.innerHTML += `
@@ -61,19 +77,26 @@ function searchRestaurants() {
 }
 
 function findCheapest() {
-  const cheapest = restaurantData.reduce((a, b) => a.price < b.price ? a : b);
-  alert("💸 Billigste Option: " + cheapest.name + " (" + cheapest.price + " CHF)");
+  if (restaurantData.length === 0) return;
+
+  const cheapest = restaurantData.reduce((a, b) =>
+    a.price < b.price ? a : b
+  );
+
+  alert(`💸 Billigste Option: ${cheapest.name} (${cheapest.price} CHF)`);
 }
 
+// GPS Start
 navigator.geolocation.getCurrentPosition(
   position => {
-    const userLocation = [position.coords.longitude, position.coords.latitude];
+    const userLocation = [
+      position.coords.longitude,
+      position.coords.latitude
+    ];
     initMap(userLocation);
-    loadRestaurants();
   },
   () => {
-    const fallback = [8.5417, 47.3769]; // Zürich
-    initMap(fallback);
-    loadRestaurants();
+    // Fallback Zürich
+    initMap([8.5417, 47.3769]);
   }
 );
