@@ -1,32 +1,29 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FoodFinder PRO</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoodFinder ULTRA PRO</title>
 
-  <!-- MapLibre -->
-  <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
-  <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+<link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
 
-  <!-- Marker Cluster -->
-  <script src="https://unpkg.com/supercluster@7.1.5/dist/supercluster.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
 
-  <link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <div id="map"></div>
 
 <div class="panel">
-  <input type="text" id="searchInput" placeholder="Pizza, Burger, Sushi..." />
-  <button onclick="searchRestaurants()">🔎 Suchen</button>
-  <button onclick="findCheapest()">💸 Billigste finden</button>
-  <div id="results"></div>
+<input id="searchInput" placeholder="Pizza, Burger, Sushi...">
+<button onclick="searchRestaurants()">🔎 Suchen</button>
+<button onclick="aiRecommend()">🤖 Empfehlung</button>
+<div id="results"></div>
 </div>
 
 <script src="script.js"></script>
-
 </body>
 </html>
